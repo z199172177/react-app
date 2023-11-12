@@ -84,6 +84,11 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ├── tsconfig.json # ts配置文件
 └── yarn.lock # yarn下载包的缓存文件
 
+>配置
+> * package.json  
+>   * "homepage": "https://z199172177.github.io/react-gh-pages"
+> * routerList.tsx
+>   * <Routes><Route path="/react-gh-pages/" element={<PFDataList />} /><Route path="/react-gh-pages/PFDataList" element={<PFDataList />} /></Routes>
 
 ## 命令
 * 创建项目：npx create-react-app react-gh-pages --template typescript

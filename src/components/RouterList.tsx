@@ -5,8 +5,7 @@ import PFDataList from "../pages/PFDataList";
 function RouterList() {
     return (
         <Routes>
-            <Route path="/react-gh-pages/" element={<PFDataList />} />
-            <Route path="/react-gh-pages/PFDataList" element={<PFDataList />} />
+            <Route path="/" element={<PFDataList />} />
         </Routes>
     );
 }
