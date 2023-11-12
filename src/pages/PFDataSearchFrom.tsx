@@ -6,12 +6,13 @@ interface Props {
     setDataChartsVisible: Function;
     setSlowSqlListVisible: Function;
     setSettingDsVisible: Function;
+    setAllProjectDataChartsVisible: Function;
 }
 const { RangePicker } = DatePicker;
 
 const PFDataSearchFrom = forwardRef((props: Props, ref) => {
     const [form] = Form.useForm();
-    const {formQuery, formReset, setDataChartsVisible, setSlowSqlListVisible, setSettingDsVisible} = props;
+    const {formQuery, formReset, setDataChartsVisible, setSlowSqlListVisible, setSettingDsVisible, setAllProjectDataChartsVisible} = props;
 
     // 暴露表单方法
     useImperativeHandle(ref, () => ({
@@ -25,7 +26,7 @@ const PFDataSearchFrom = forwardRef((props: Props, ref) => {
 
 
     // 打开弹框
-    const openImportCard = () => {
+    const dataChartCard = () => {
         setDataChartsVisible(true);
     };
 
@@ -37,6 +38,11 @@ const PFDataSearchFrom = forwardRef((props: Props, ref) => {
     // 打开弹框
     const openSettingDsCard = () => {
         setSettingDsVisible(true);
+    };
+
+    // 打开弹框
+    const openAllProjectViewCard = () => {
+        setAllProjectDataChartsVisible(true);
     };
 
     return (
@@ -89,7 +95,7 @@ const PFDataSearchFrom = forwardRef((props: Props, ref) => {
                 <Row>
                     <Col span={2} style={{textAlign:"left"}}>
                         <div className="chart-btn">
-                            <Button type="primary" htmlType="submit" onClick={openImportCard}>
+                            <Button type="primary" htmlType="submit" onClick={dataChartCard}>
                                 展示图表
                             </Button>
                         </div>
@@ -101,6 +107,13 @@ const PFDataSearchFrom = forwardRef((props: Props, ref) => {
                             </Button>
                         </div>
                     </Col>
+                    <Col span={3} style={{textAlign:"left"}}>
+                        <div className="chart-btn">
+                            <Button type="primary" htmlType="submit" onClick={openAllProjectViewCard}>
+                                所有项目信息统计
+                            </Button>
+                        </div>
+                    </Col>
                     <Col span={2} style={{textAlign:"left"}}>
                         <div className="chart-btn">
                             <Button type="primary" htmlType="submit" onClick={openSettingDsCard}>
@@ -108,7 +121,7 @@ const PFDataSearchFrom = forwardRef((props: Props, ref) => {
                             </Button>
                         </div>
                     </Col>
-                    <Col span={18} style={{textAlign:"right"}}>
+                    <Col span={15} style={{textAlign:"right"}}>
                         <div className="action-container">
                             <Button type="primary" htmlType="submit">搜索</Button>
                             <Button style={{marginLeft:10}} className="reset-btn" onClick={() => {formReset();}}>重置</Button>

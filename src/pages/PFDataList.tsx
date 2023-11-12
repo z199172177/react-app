@@ -21,6 +21,7 @@ import env from "../components/env";
 import PFDataSearchFrom from "./PFDataSearchFrom";
 import PFDataCharts from "./PFDataCharts";
 import PFSlowSqlDataList from "./PFSlowSqlDataList";
+import PFProjectView from "./PFProjectView";
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
@@ -36,6 +37,7 @@ const PFDataList: React.FC = () => {
     const {token: {colorBgContainer}} = theme.useToken(); //样式
     const layoutCls: React.CSSProperties = {minHeight: "100vh",}; //样式
     const [dataChartsVisible, setDataChartsVisible] = useState<boolean>(false); // 是否显示导出弹窗
+    const [allProjectDataChartsVisible, setAllProjectDataChartsVisible] = useState<boolean>(false); // 是否显示导出弹窗
     const [slowSqlListVisible, setSlowSqlListVisible] = useState<boolean>(false); // 是否显示导出弹窗
     const [settingDsVisible, setSettingDsVisible] = useState<boolean>(false); // 是否显示导出弹窗
     const [dsInputValue, setDsInputValue] = useState('');
@@ -212,6 +214,7 @@ const PFDataList: React.FC = () => {
                                       setDataChartsVisible={setDataChartsVisible}
                                       setSlowSqlListVisible={setSlowSqlListVisible}
                                       setSettingDsVisible={setSettingDsVisible}
+                                      setAllProjectDataChartsVisible={setAllProjectDataChartsVisible}
                     />
                 </Header>
                 <Content style={{margin: "0 0"}}>
@@ -252,6 +255,24 @@ const PFDataList: React.FC = () => {
                         </Modal>
                     ) : null}
 
+                    {allProjectDataChartsVisible ? (
+                        <Modal
+                            title="项目数据统计"
+                            open={allProjectDataChartsVisible}
+                            wrapClassName="pFinder-allProject-data-chart-modal"
+                            closable={true}
+                            width={1000}
+                            onCancel={() => {
+                                setAllProjectDataChartsVisible(false);
+                            }}
+                            maskClosable={false}
+                            footer={<></>}
+                        >
+
+                            <PFProjectView/>
+                        </Modal>
+                    ) : null}
+
                     {slowSqlListVisible ? (
                         <Modal
                             title="慢SQL列表"
@@ -287,7 +308,7 @@ const PFDataList: React.FC = () => {
                                     <Input defaultValue={env.apiUrl} onChange={(e) => setDsInputValue(e.target.value)}/>
                                     <Button type="primary" onClick={() => {
                                         env.apiUrl = dsInputValue;
-                                        window.sessionStorage.setItem('apiUrl', dsInputValue);
+                                        window.localStorage.setItem('apiUrl', dsInputValue);
                                         openNotification('top', "success", '设置成功');
                                     }}>Submit</Button>
                                 </Space.Compact>
@@ -295,8 +316,8 @@ const PFDataList: React.FC = () => {
                         </Modal>
                     ) : null}
                 </Content>
-                <Footer style={{textAlign: "center"}}>
-                </Footer>
+                {/*<Footer style={{textAlign: "center"}}>*/}
+                {/*</Footer>*/}
             </Layout>
         </>
     );
