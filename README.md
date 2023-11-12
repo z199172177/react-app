@@ -84,16 +84,18 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ├── tsconfig.json # ts配置文件
 └── yarn.lock # yarn下载包的缓存文件
 
->配置
-> * package.json  
->   * "homepage": "https://z199172177.github.io/react-gh-pages"
-> * routerList.tsx
->   * <Routes><Route path="/react-gh-pages/" element={<PFDataList />} /><Route path="/react-gh-pages/PFDataList" element={<PFDataList />} /></Routes>
+## 配置
+ * package.json  
+   * "homepage": "https://z199172177.github.io/react-gh-pages"
+ * routerList.tsx
+   * `<Routes><Route path="/react-gh-pages/" element={<PFDataList />} /><Route path="/react-gh-pages/PFDataList" element={<PFDataList />} /></Routes>`
 
 ## 命令
 * 创建项目：npx create-react-app react-gh-pages --template typescript
-* ghpage: npm install gh-pages --save-dev
+* ghPage: npm install gh-pages --save-dev
   * https://www.xiaoqiang.tech/2021/03/03/%E5%B0%86React%20APP%E9%83%A8%E7%BD%B2%E5%88%B0GitHub%20Pages/
+  * npm run deploy
+* 打包：npm run build
 * antd: npm install antd --save
 * axios: npm install axios 
 * 路由：npm install react-router-dom
