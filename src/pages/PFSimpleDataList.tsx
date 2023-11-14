@@ -1,9 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Card, Pagination, PaginationProps, Table, Tag} from "antd";
+import {Card, Modal, Pagination, PaginationProps, Table, Tag} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {MyPartial, PFinderListReqParams, PFinderTableItem} from "../interface/interface";
+import {MyPartial, PFinderListReqParams, PFinderSlowSqlListReqParams, PFinderTableItem} from "../interface/interface";
 import {DefaultPageSize} from "../components/DefaultPageSize";
 import {queryPFinderList} from "../api/service";
+import PFSlowSqlDataList from "./PFSlowSqlDataList";
 
 
 
@@ -17,6 +18,8 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
     const [dataSource, setDataSource] = useState<PFinderTableItem[]>(); // 列表数据
     const [totalNum, setTotalNum] = useState<number>(0); // 总条条数
     const [tableLoading, setTableLoading] = useState<boolean>(false); // 列表数据加载动画
+    const [slowSqlListVisible, setSlowSqlListVisible] = useState<boolean>(false); // 是否显示导出弹窗
+    const [slowSqlQueryParams, setSlowSqlQueryParams] = useState<MyPartial<PFinderSlowSqlListReqParams>>({}); //  当前查询参数
     const {queryParams} = props;
 
     //分页
@@ -63,13 +66,23 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             title: '应用名称',
             dataIndex: 'appName',
             key: 'appName',
-            width: 150
+            width: 150,
+            render: (text) => <a target="_blank" onClick={()=>{
+                let jsonObj = {appName: text};
+                setSlowSqlQueryParams(jsonObj);
+                setSlowSqlListVisible(true);
+            }}>{text}</a>,
         },
         {
             title: 'tranceId',
             dataIndex: 'tranceId',
             key: 'tranceId',
-            width: 300
+            width: 300,
+            render: (text) => <a target="_blank" onClick={()=>{
+                let jsonObj = {tranceId: text};
+                setSlowSqlQueryParams(jsonObj);
+                setSlowSqlListVisible(true);
+            }}>{text}</a>,
         },
         {
             title: '时间',
@@ -155,6 +168,22 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
                             onChange={handlerChangePage}
                 />
             </Card>
+            {slowSqlListVisible ? (
+                <Modal
+                    title="慢SQL列表"
+                    open={slowSqlListVisible}
+                    wrapClassName="pFinder-slow-sql-modal"
+                    closable={true}
+                    width={1500}
+                    onCancel={() => {
+                        setSlowSqlListVisible(false);
+                    }}
+                    maskClosable={false}
+                    footer={<></>}
+                >
+                    <PFSlowSqlDataList slowSqlQueryParams={slowSqlQueryParams}/>
+                </Modal>
+            ) : null}
         </>
     );
 };

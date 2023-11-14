@@ -284,7 +284,7 @@ const PFDataList: React.FC = () => {
                             maskClosable={false}
                             footer={<></>}
                         >
-                            <PFSlowSqlDataList/>
+                            <PFSlowSqlDataList slowSqlQueryParams={''}/>
                         </Modal>
                     ) : null}
 

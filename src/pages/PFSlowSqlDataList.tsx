@@ -9,13 +9,18 @@ import {DefaultPageSize} from "../components/DefaultPageSize";
 import {queryPFinderSlowSqlList} from "../api/service";
 import {MyPartial, PFinderSlowSqlListReqParams, PFinderSlowSqlTableItem} from "../interface/interface";
 
-const PFSlowSqlDataList: React.FC = () => {
+
+interface Props {
+    slowSqlQueryParams: any;
+}
+const PFSlowSqlDataList: React.FC<Props> = (props) => {
     const [pageNum, setPageNum] = useState<number>(1); // 当前页码
     const [pageSize, setPageSize] = useState<number>(DefaultPageSize); // 每页条数
     const [dataSource, setDataSource] = useState<PFinderSlowSqlTableItem[]>(); // 列表数据
     const [totalNum, setTotalNum] = useState<number>(0); // 总条条数
     const [tableLoading, setTableLoading] = useState<boolean>(false); // 列表数据加载动画
     const {token: {colorBgContainer}} = theme.useToken(); //样式
+    const {slowSqlQueryParams} = props;
     //分页
     const itemRender: PaginationProps['itemRender'] = (_, type, originalElement) => {
         if (type === 'prev') {
@@ -27,78 +32,18 @@ const PFSlowSqlDataList: React.FC = () => {
         return originalElement;
     };
     const columns: ColumnsType<PFinderSlowSqlTableItem> = [
-        // {
-        //     title:'id',
-        //     dataIndex:'id',
-        //     key:'id'
-        // },
-        // {
-        //     title:'tranceId',
-        //     dataIndex:'tranceId',
-        //     key:'tranceId'
-        // },
         {
             title:'应用',
             dataIndex:'appName',
             key:'appName',
             width:100
         },
-        // {
-        //     title:'platform',
-        //     dataIndex:'platform',
-        //     key:'platform'
-        // },
-        // {
-        //     title:'component',
-        //     dataIndex:'component',
-        //     key:'component'
-        // },
         {
             title:'耗时(ms)',
             dataIndex:'elapsedTime',
             key:'elapsedTime',
             width:100
         },
-        // {
-        //     title:'hasError',
-        //     dataIndex:'hasError',
-        //     key:'hasError'
-        // },
-        // {
-        //     title:'operation',
-        //     dataIndex:'operation',
-        //     key:'operation'
-        // },
-        // {
-        //     title:'protocol',
-        //     dataIndex:'protocol',
-        //     key:'protocol'
-        // },
-        // {
-        //     title:'startTime',
-        //     dataIndex:'startTime',
-        //     key:'startTime'
-        // },
-        // {
-        //     title:'dbName',
-        //     dataIndex:'dbName',
-        //     key:'dbName'
-        // },
-        // {
-        //     title:'hostInfo',
-        //     dataIndex:'hostInfo',
-        //     key:'hostInfo'
-        // },
-        // {
-        //     title:'method',
-        //     dataIndex:'method',
-        //     key:'method'
-        // },
-        // {
-        //     title:'type',
-        //     dataIndex:'type',
-        //     key:'type'
-        // },
         {
             title:'SQL',
             dataIndex:'sqlInfo',
@@ -113,27 +58,7 @@ const PFSlowSqlDataList: React.FC = () => {
                     </>
                 );
             },
-        },
-        // {
-        //     title:'userName',
-        //     dataIndex:'userName',
-        //     key:'userName'
-        // },
-        // {
-        //     title:'fqon',
-        //     dataIndex:'fqon',
-        //     key:'fqon'
-        // },
-        // {
-        //     title:'gmtCreate',
-        //     dataIndex:'gmtCreate',
-        //     key:'gmtCreate'
-        // },
-        // {
-        //     title: ' gmtModified',
-        //     dataIndex: ' gmtModified',
-        //     key: ' gmtModified'
-        // }
+        }
     ];
 
     // 获取表格数据
@@ -144,7 +69,7 @@ const PFSlowSqlDataList: React.FC = () => {
             }
 
             setTableLoading(true);
-            const paramsInit: any = Object.assign({pageNum, pageSize}, params);
+            const paramsInit: any = Object.assign({pageNum, pageSize}, slowSqlQueryParams, params);
             const resp: any = await queryPFinderSlowSqlList(paramsInit);
             setTableLoading(false);
             if (resp && Array.isArray(resp.data.data.records)) {

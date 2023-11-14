@@ -31,7 +31,7 @@ export interface PFinderListReqParams {
     startTimeEnd?: string;
 }
 
-//PFinder数据列表
+//PFinder slowSql数据列表
 export interface PFinderSlowSqlTableItem {
     id: number;
     tranceId: string;
@@ -54,10 +54,13 @@ export interface PFinderSlowSqlTableItem {
     gmtModified: number;
 }
 
+
 // PFinder数据请求参数
 export interface PFinderSlowSqlListReqParams {
     pageNum: number; // 页码
     pageSize: number; // 每页条数
+    appName?: string;
+    tranceId?: string;
 }
 
 export type MyPartial<T> = { [K in keyof T]?: T[K] };
