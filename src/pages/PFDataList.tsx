@@ -59,7 +59,6 @@ const PFDataList: React.FC = () => {
             // description: message,
             placement: placement,
         });
-
     };
 
     const columns: ColumnsType<PFinderTableItem> = [
@@ -251,7 +250,7 @@ const PFDataList: React.FC = () => {
                             footer={<></>}
                         >
 
-                            <PFDataCharts queryParams={queryParams}/>
+                            <PFDataCharts queryParams={queryParams} setAllProjectDataChartsVisible={setAllProjectDataChartsVisible}/>
                         </Modal>
                     ) : null}
 

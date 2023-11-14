@@ -5,28 +5,29 @@ import {getBaseHost} from "../components/env";
 
 interface Props {
     queryParams: any;
+    setAllProjectDataChartsVisible: Function;
 }
 
 const PFDataCharts: React.FC<Props> = (props) => {
     const [data, setData] = useState([]);
-    const {queryParams} = props;
+    const {queryParams, setAllProjectDataChartsVisible} = props;
 
     useEffect(() => {
         asyncFetch();
     }, []);
 
+
     const asyncFetch = () => {
         fetch(getBaseHost() + '/pFinderData/dataStatistics',
             {
                 method: "POST",
-                headers:{
+                headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(queryParams),
             }
         )
             .then((response) => {
-                console.log(response, '成功');
                 return response.json()
             })
             .then((json) => setData(json))
@@ -60,8 +61,18 @@ const PFDataCharts: React.FC<Props> = (props) => {
         },
     };
 
+    //柱形图的柱子被 click 的时候
+    const onReadyLocCol = (plot: any) => {
+        plot.on('interval:click', (...args: any) => {
+            const data = args[0].data?.data;
+
+            console.log(data, 'data')
+            setAllProjectDataChartsVisible(true);
+        });
+    };
+
     // @ts-ignore
-    return (<Column {...config} />);
+    return (<Column {...config} onReady={onReadyLocCol}/>);
 };
 
 
