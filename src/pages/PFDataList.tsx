@@ -249,7 +249,6 @@ const PFDataList: React.FC = () => {
                             maskClosable={false}
                             footer={<></>}
                         >
-
                             <PFDataCharts queryParams={queryParams} setAllProjectDataChartsVisible={setAllProjectDataChartsVisible}/>
                         </Modal>
                     ) : null}

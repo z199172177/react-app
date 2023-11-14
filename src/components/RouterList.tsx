@@ -7,6 +7,7 @@ function RouterList() {
     return (
         <Routes>
             <Route path="/" element={<PFProjectView />}/>
+            <Route path="/PFDataList" element={<PFDataList />}/>
         </Routes>
     );
 }

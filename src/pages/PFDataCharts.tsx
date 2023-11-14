@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Column} from "@ant-design/plots";
 import {getBaseHost} from "../components/env";
+import {dataStatisticsAsyncFetch} from "../api/chartApi";
 
 
 interface Props {
@@ -13,28 +14,10 @@ const PFDataCharts: React.FC<Props> = (props) => {
     const {queryParams, setAllProjectDataChartsVisible} = props;
 
     useEffect(() => {
-        asyncFetch();
+        dataStatisticsAsyncFetch(setData, queryParams);
     }, []);
 
 
-    const asyncFetch = () => {
-        fetch(getBaseHost() + '/pFinderData/dataStatistics',
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(queryParams),
-            }
-        )
-            .then((response) => {
-                return response.json()
-            })
-            .then((json) => setData(json))
-            .catch((error) => {
-                console.log('fetch data failed', error);
-            });
-    };
     const config = {
         data,
         isStack: true,
