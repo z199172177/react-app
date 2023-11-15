@@ -187,7 +187,7 @@ const PFProjectView: React.FC = () => {
                             <Input defaultValue={env.apiUrl} onChange={(e) => setDsInputValue(e.target.value)}/>
                             <Button type="primary" onClick={() => {
                                 env.apiUrl = dsInputValue;
-                                window.localStorage.setItem('apiUrl', dsInputValue);
+                                window.sessionStorage.setItem('apiUrl', dsInputValue);
                                 openNotification('top', "success", '设置成功');
                                 setSettingDsVisible(false);
                             }}>Submit</Button>

@@ -6,7 +6,7 @@ const env = {
 export const REACT_APP_ENV = 'dev';
 
 export const getBaseHost = () => {
-    env.apiUrl = window.localStorage.getItem('apiUrl');
+    env.apiUrl = window.sessionStorage.getItem('apiUrl');
     return env.apiUrl;
 };
 
