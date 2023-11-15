@@ -7,7 +7,6 @@ import {queryPFinderList} from "../api/service";
 import PFSlowSqlDataList from "./PFSlowSqlDataList";
 
 
-
 interface Props {
     queryParams: any;
 }
@@ -67,22 +66,42 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             dataIndex: 'appName',
             key: 'appName',
             width: 150,
-            render: (text) => <a target="_blank" onClick={()=>{
-                let jsonObj = {appName: text};
-                setSlowSqlQueryParams(jsonObj);
-                setSlowSqlListVisible(true);
-            }}>{text}</a>,
+            render: (text, record) => {
+                if (record.component === 'Mysql') {
+                    return (
+                        <a target="_blank" onClick={() => {
+                            let jsonObj = {appName: text};
+                            setSlowSqlQueryParams(jsonObj);
+                            setSlowSqlListVisible(true);
+                        }}>{text}</a>
+                    );
+                } else {
+                    return (
+                        <>{text}</>
+                    );
+                }
+            }
         },
         {
             title: 'tranceId',
             dataIndex: 'tranceId',
             key: 'tranceId',
             width: 300,
-            render: (text) => <a target="_blank" onClick={()=>{
-                let jsonObj = {tranceId: text};
-                setSlowSqlQueryParams(jsonObj);
-                setSlowSqlListVisible(true);
-            }}>{text}</a>,
+            render: (text, record) => {
+                if (record.component === 'Mysql') {
+                    return (
+                        <a target="_blank" onClick={() => {
+                            let jsonObj = {tranceId: text};
+                            setSlowSqlQueryParams(jsonObj);
+                            setSlowSqlListVisible(true);
+                        }}>{text}</a>
+                    );
+                } else {
+                    return (
+                        <>{text}</>
+                    );
+                }
+            }
         },
         {
             title: '时间',
@@ -117,9 +136,7 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             render: (item) => {
                 let color = item == 1 ? 'green' : 'red';
                 return (
-
                     <>
-
                         <Tag color={color}>
                             {item == 1 ? "成功" : "失败"}
                         </Tag>
@@ -156,7 +173,8 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
                        loading={tableLoading}
                        rowKey={(record) => record.id}
                        sticky={{offsetHeader: 64}}
-                       scroll={{x: 1500, y: 750}}/>
+                       scroll={{x: 1500, y: 500}}
+                />
             </Card>
             <Card>
                 <Pagination defaultCurrent={pageNum}
