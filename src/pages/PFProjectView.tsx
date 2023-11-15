@@ -87,7 +87,12 @@ const PFProjectView: React.FC = () => {
                 let appName = data.appName;
 
                 if (chartDataLevel === 1) {
-                    let jsonObj = {appName: appName, component:type};
+                    let jsonObj;
+                    if (type === 'error') {
+                        jsonObj = {appName: appName, state: '2'};
+                    }else {
+                        jsonObj = {appName: appName, component: type};
+                    }
                     setCurrentSelectedData(jsonObj);
                     setQueryParams(jsonObj);
                     setDataListVisible(true);
