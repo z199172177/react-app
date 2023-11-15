@@ -6,7 +6,7 @@ import PFProjectView from "../pages/PFProjectView";
 function RouterList() {
     return (
         <Routes>
-            <Route path="/" element={<PFProjectView />}/>
+            <Route path="/home" element={<PFProjectView />}/>
             <Route path="/PFDataList" element={<PFDataList />}/>
         </Routes>
     );
