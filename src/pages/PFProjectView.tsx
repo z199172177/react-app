@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {Bar} from '@ant-design/plots';
 import {allProjectViewAsyncFetch, oneProjectViewAsyncFetch} from "../api/chartApi";
-import {Button, Card, Col, Form, Input, Layout, Modal, notification, Row, Select, Space, theme} from 'antd';
+import {Button, Card, Col, Form, Input, Modal, notification, Row, Space} from 'antd';
 import env from "../components/env";
 import {NotificationPlacement} from "antd/es/notification/interface";
 import PFSimpleDataList from "./PFSimpleDataList";
 import {MyPartial, PFinderListReqParams} from "../interface/interface";
+import PFSevenDaysDataList from "./PFSevenDaysDataList";
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 const PFProjectView: React.FC = () => {
+    //主数据url
+    let mainDataUrl = '/pFinderData/allProjectDataStatistics';
+
     //设置数据源
     const [settingDsVisible, setSettingDsVisible] = useState<boolean>(false); // 是否显示导出弹窗
     const [dsInputValue, setDsInputValue] = useState('');
@@ -19,6 +23,10 @@ const PFProjectView: React.FC = () => {
 
     //数据列表
     const [dataListVisible, setDataListVisible] = useState<boolean>(false); // 是否显示导出弹窗
+
+    //最近7天数据列表
+    const [sevenDaysDataListVisible, setSevenDaysDataListVisible] = useState<boolean>(false); // 是否显示导出弹窗
+
     //查询参数
     const [queryParams, setQueryParams] = useState<MyPartial<PFinderListReqParams>>({}); //  当前查询参数
 
@@ -45,6 +53,12 @@ const PFProjectView: React.FC = () => {
 
     //数据重置
     const formReset = () => {
+        allProjectViewAsyncFetch(setData);
+        setChartDataLevel(1);
+    };
+
+    //
+    const show7DayDate = () => {
         allProjectViewAsyncFetch(setData);
         setChartDataLevel(1);
     };
@@ -149,15 +163,19 @@ const PFProjectView: React.FC = () => {
                 <Card style={{marginBottom: "10px"}}>
                     <Form form={form} name="search-form" className="search-form">
                         <Row>
-                            <Col span={22} style={{textAlign: "right"}}>
+                            <Col span={2} style={{textAlign: "right"}}>
                                 <div className="chart-btn">
-                                    <Button type="primary" htmlType="submit" onClick={formReset}>重置</Button>
+                                    <Button type="primary" htmlType="submit" onClick={()=>setSevenDaysDataListVisible(true)}>展示一周数据</Button>
+                                </div>
+                            </Col>
+                            <Col span={20} style={{textAlign: "right"}}>
+                                <div className="chart-btn">
+                                    <Button type="primary" htmlType="submit" onClick={formReset}>刷新</Button>
                                 </div>
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <div className="chart-btn">
-                                    <Button type="primary" htmlType="submit"
-                                            onClick={() => setSettingDsVisible(true)}>设置</Button>
+                                    <Button type="primary" htmlType="submit" onClick={() => setSettingDsVisible(true)}>设置</Button>
                                 </div>
                             </Col>
                         </Row>
@@ -211,6 +229,24 @@ const PFProjectView: React.FC = () => {
                     footer={<></>}
                 >
                     <PFSimpleDataList queryParams={queryParams}/>
+                </Modal>
+            ) : null}
+
+            {/*最近7天数据弹窗*/}
+            {sevenDaysDataListVisible ? (
+                <Modal
+                    title="最近7天数据列表"
+                    open={sevenDaysDataListVisible}
+                    wrapClassName="pFinder-7daysData-ds-modal"
+                    closable={true}
+                    width={2000}
+                    onCancel={() => {
+                        setSevenDaysDataListVisible(false);
+                    }}
+                    maskClosable={false}
+                    footer={<></>}
+                >
+                    <PFSevenDaysDataList />
                 </Modal>
             ) : null}
         </>
