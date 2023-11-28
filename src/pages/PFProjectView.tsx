@@ -175,7 +175,7 @@ const PFProjectView: React.FC = () => {
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <div className="chart-btn">
-                                    <Button type="primary" htmlType="submit" onClick={() => setSettingDsVisible(true)}>设置</Button>
+                                    <Button type="primary" disabled={true} htmlType="submit" onClick={() => setSettingDsVisible(true)}>设置</Button>
                                 </div>
                             </Col>
                         </Row>
