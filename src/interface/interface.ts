@@ -10,6 +10,7 @@ export interface PFinderTableItem {
     state: string;
     elapsedTime: number;
     detailUrl: string;
+    env: string;
 }
 
 //PFinder检索表单

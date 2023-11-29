@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Card, Modal, Pagination, PaginationProps, Table, Tag} from "antd";
+import {Card, Modal, Pagination, PaginationProps, Space, Table, Tag} from "antd";
 import {MyPartial, PFinderListReqParams, PFinderSlowSqlListReqParams, PFinderTableItem} from "../interface/interface";
 import {DefaultPageSize} from "../components/DefaultPageSize";
 import {queryPFinderList} from "../api/service";
@@ -129,7 +129,32 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             title: 'ip',
             dataIndex: 'ip',
             key: 'ip',
-            width: 160
+            width: 200,
+            render: (item, record) => {
+                let envTxt = "";
+                let color = "";
+                if (record.env === "pre") {
+                    color = 'processing';
+                    envTxt = "预发";
+                }else if (record.env === "pro") {
+                    color = 'error';
+                    envTxt = "线上";
+                }else {
+                    color = 'warning';
+                    envTxt = "未知";
+                }
+                return (
+                    <>
+                        <Space>
+                            {item}
+                            <Tag color={color}>
+                                {envTxt}
+                            </Tag>
+                        </Space>
+
+                    </>
+                )
+            }
         },
         {
             title: '调用链节点',
