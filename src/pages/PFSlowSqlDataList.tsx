@@ -1,18 +1,21 @@
 import React, {useEffect, useState} from "react";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import {prism} from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import {Pagination, PaginationProps, Table, theme} from "antd";
+import {Modal, Pagination, PaginationProps, Space, Table, theme} from "antd";
 import {ColumnsType} from "antd/es/table";
 
 import {DefaultPageSize} from "../components/DefaultPageSize";
 import {queryPFinderSlowSqlList} from "../api/service";
 import {MyPartial, PFinderSlowSqlListReqParams, PFinderSlowSqlTableItem} from "../interface/interface";
+import CustomCodeBlock from "../components/CustomCodeBlock";
+import './PFSlowSqlDataList.css'; // 导入自定义样式文件
 
 
 interface Props {
     slowSqlQueryParams: any;
 }
+
 const PFSlowSqlDataList: React.FC<Props> = (props) => {
     const [pageNum, setPageNum] = useState<number>(1); // 当前页码
     const [pageSize, setPageSize] = useState<number>(DefaultPageSize); // 每页条数
@@ -21,6 +24,10 @@ const PFSlowSqlDataList: React.FC<Props> = (props) => {
     const [tableLoading, setTableLoading] = useState<boolean>(false); // 列表数据加载动画
     const {token: {colorBgContainer}} = theme.useToken(); //样式
     const {slowSqlQueryParams} = props;
+
+    const [sqlFormatVisible, setSqlFormatVisible] = useState<boolean>(false); // sql格式化弹窗
+    const [currentSql, setCurrentSql] = useState<string>(''); // 当前sql
+
     //分页
     const itemRender: PaginationProps['itemRender'] = (_, type, originalElement) => {
         if (type === 'prev') {
@@ -33,23 +40,22 @@ const PFSlowSqlDataList: React.FC<Props> = (props) => {
     };
     const columns: ColumnsType<PFinderSlowSqlTableItem> = [
         {
-            title:'应用',
-            dataIndex:'appName',
-            key:'appName',
-            width:100
+            title: '应用',
+            dataIndex: 'appName',
+            key: 'appName',
+            width: 100
         },
         {
-            title:'耗时(ms)',
-            dataIndex:'elapsedTime',
-            key:'elapsedTime',
-            width:100
+            title: '耗时(ms)',
+            dataIndex: 'elapsedTime',
+            key: 'elapsedTime',
+            width: 100
         },
         {
-            title:'SQL',
-            dataIndex:'sqlInfo',
-            key:'sqlInfo',
+            title: 'SQL',
+            dataIndex: 'sqlInfo',
+            key: 'sqlInfo',
             render: (text) => {
-
                 return (
                     <>
                         <SyntaxHighlighter language="sql" style={prism}>
@@ -86,7 +92,15 @@ const PFSlowSqlDataList: React.FC<Props> = (props) => {
     const handlerChangePage = (page: number, size: number) => {
         setPageNum(page);
         setPageSize(size);
-        queryList({pageNum: page, pageSize:size});
+        queryList({pageNum: page, pageSize: size});
+    };
+
+    const onRowClick = (record: any, index: any, event: any) => {
+        let sqlInfo = record.sqlInfo;
+        setCurrentSql(sqlInfo);
+        setSqlFormatVisible(true);
+        //阻止默认事件
+        event.stopPropagation();
     };
 
     useEffect(() => {
@@ -94,27 +108,58 @@ const PFSlowSqlDataList: React.FC<Props> = (props) => {
     }, []);
 
     return (
-       <>
-           <div style={{paddingLeft: 24, paddingRight: 24, minHeight: "auto", background: colorBgContainer}}>
-               <Table columns={columns}
-                      dataSource={dataSource}
-                      pagination={false}
-                      loading={tableLoading}
-                      rowKey={(record) => record.id}
-                      sticky={{offsetHeader: 64}}
-                      scroll={{x: 1500, y: 750}}/>
-           </div>
-           <div style={{padding: 24, minHeight: "auto", background: colorBgContainer, textAlign: "center"}}>
-               <Pagination defaultCurrent={pageNum}
-                           defaultPageSize={pageSize}
-                           current={pageNum}
-                           total={totalNum}
-                           showTitle={false}
-                           itemRender={itemRender}
-                           onChange={handlerChangePage}
-               />
-           </div>
-       </>
+        <>
+            <div style={{paddingLeft: 24, paddingRight: 24, minHeight: "auto", background: colorBgContainer}}>
+                <Table
+                    columns={columns}
+                    dataSource={dataSource}
+                    pagination={false}
+                    loading={tableLoading}
+                    rowKey={(record) => record.id}
+                    sticky={{offsetHeader: 64}}
+                    scroll={{x: 1500, y: 750}}
+                    rowClassName="hand-pointer"
+                    onRow={(record, rowKey) => {
+                        return {
+                            // record 指的当前行的数据内容，rowKey指的是当前行的下标
+                            onClick: onRowClick.bind(this, record, rowKey)
+                        };
+                    }}
+
+                />
+            </div>
+            <div style={{padding: 24, minHeight: "auto", background: colorBgContainer, textAlign: "center"}}>
+                <Pagination defaultCurrent={pageNum}
+                            defaultPageSize={pageSize}
+                            current={pageNum}
+                            total={totalNum}
+                            showTitle={false}
+                            itemRender={itemRender}
+                            onChange={handlerChangePage}
+
+                />
+            </div>
+
+            {/*格式化SQL弹窗*/}
+            {sqlFormatVisible ? (
+                <Modal
+                    // title="数据格式化"
+                    open={sqlFormatVisible}
+                    wrapClassName="pFinder-setting-ds-modal"
+                    closable={true}
+                    width={1000}
+                    onCancel={() => {
+                        setSqlFormatVisible(false);
+                    }}
+                    maskClosable={false}
+                    footer={<></>}
+                >
+                    <Space direction="vertical" size="large" style={{width: '100%'}}>
+                        <CustomCodeBlock code={currentSql}/>
+                    </Space>
+                </Modal>
+            ) : null}
+        </>
     );
 };
 

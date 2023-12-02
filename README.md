@@ -101,3 +101,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 * 路由：npm install react-router-dom
 * 代码高亮：npm install react-syntax-highlighter --save
 * 图表：npm install @ant-design/charts --save
+* 添加sass样式：npm install node-sass --save
+* 代码高亮：npm install react-highlight
+* SQL格式化：npm install sql-formatter 
+* 代码Copy：npm install react-copy-to-clipboard
