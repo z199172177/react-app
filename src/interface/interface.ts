@@ -32,6 +32,7 @@ export interface PFinderListReqParams {
     startTimeEnd?: string;
     sortField?: string;
     sortOrder?: string;
+    evn?: string;
 }
 
 //PFinder slowSql数据列表

@@ -49,7 +49,6 @@ const PFProjectView: React.FC = () => {
         });
     };
 
-
     useEffect(() => {
         allProjectViewAsyncFetch(setData);
     }, []);
@@ -68,7 +67,9 @@ const PFProjectView: React.FC = () => {
 
     function PFProjectChart() {
         const config = {
-            data: data.reverse(),
+            data: data.sort((a: any, b: any) => {
+                return a.type.localeCompare(b.type);
+            }),
             isStack: true,
             xField: 'xField',
             yField: 'yField',
@@ -76,8 +77,6 @@ const PFProjectView: React.FC = () => {
             label: {
                 // 可手动配置 label 数据标签位置
                 position: 'middle',
-                // 'left', 'middle', 'right'
-                // 可配置附加的布局方法
                 layout: [
                     // 柱形图数据标签位置自动调整
                     {
@@ -97,7 +96,7 @@ const PFProjectView: React.FC = () => {
         return (<Bar {...config} onReady={(bar) => {
             bar.on('interval:click', (...args: any) => {
                 const data = args[0].data?.data;
-                console.log(data,'interval:click')
+                console.log(data, 'interval:click')
 
 
                 let type = data.type;
@@ -107,21 +106,26 @@ const PFProjectView: React.FC = () => {
                     let jsonObj;
                     if (type === 'error') {
                         jsonObj = {appName: appName, state: '2'};
-                    }else {
+                    } else {
                         jsonObj = {appName: appName, component: type};
                     }
                     setCurrentSelectedData(jsonObj);
                     setQueryParams(jsonObj);
                     setDataListVisible(true);
                     return;
-                }else if (chartDataLevel === 2) {
+                } else if (chartDataLevel === 2) {
                     let type = data.type;
                     let appName = data.appName;
                     let queryDate = data.year;
                     let queryDateBegin = queryDate + ' 00:00:00';
                     let queryDateEnd = queryDate + ' 23:59:59';
 
-                    let jsonObj = {appName: appName, startTimeBegin: queryDateBegin, startTimeEnd:queryDateEnd, component: type};
+                    let jsonObj = {
+                        appName: appName,
+                        startTimeBegin: queryDateBegin,
+                        startTimeEnd: queryDateEnd,
+                        component: type
+                    };
                     setQueryParams(jsonObj);
                     setDataListVisible(true);
                     return;
@@ -139,17 +143,15 @@ const PFProjectView: React.FC = () => {
 
                     oneProjectViewAsyncFetch(setData, jsonObj);
                     return;
-                }else if(chartDataLevel === 2){
+                } else if (chartDataLevel === 2) {
                     let eventTarget = e.target;
-                    console.log( eventTarget, 'eventTarget')
-
                     // @ts-ignore
                     let appName = currentSelectedData.appName;
                     // @ts-ignore
                     let queryDate = eventTarget.attrs.text;
                     let queryDateBegin = queryDate + ' 00:00:00';
                     let queryDateEnd = queryDate + ' 23:59:59';
-                    let jsonObj = {appName: appName, startTimeBegin: queryDateBegin, startTimeEnd:queryDateEnd};
+                    let jsonObj = {appName: appName, startTimeBegin: queryDateBegin, startTimeEnd: queryDateEnd};
                     setQueryParams(jsonObj);
                     setDataListVisible(true);
                     return;
@@ -168,12 +170,14 @@ const PFProjectView: React.FC = () => {
                         <Row>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <div className="chart-btn">
-                                    <Button type="primary" htmlType="submit" onClick={()=>setSevenDaysDataListVisible(true)}>近一周数据</Button>
+                                    <Button type="primary" htmlType="submit"
+                                            onClick={() => setSevenDaysDataListVisible(true)}>近一周数据</Button>
                                 </div>
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
-                                <Space style={{height:"100%"}}>
-                                    <Switch defaultChecked onClick={e=>changeDataEnv(e)}/>
+                                <Space style={{height: "100%"}}>
+                                    <Switch checked={window.sessionStorage.getItem("currentDateEnv") === "pre"}
+                                            onClick={e => changeDataEnv(e)}/>
                                     <Tooltip title="prompt text">
                                         <span>预发</span>
                                     </Tooltip>
@@ -186,7 +190,8 @@ const PFProjectView: React.FC = () => {
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <div className="chart-btn">
-                                    <Button type="primary" disabled={true} htmlType="submit" onClick={() => setSettingDsVisible(true)}>设置</Button>
+                                    <Button type="primary" disabled={true} htmlType="submit"
+                                            onClick={() => setSettingDsVisible(true)}>设置</Button>
                                 </div>
                             </Col>
                         </Row>
@@ -257,7 +262,7 @@ const PFProjectView: React.FC = () => {
                     maskClosable={false}
                     footer={<></>}
                 >
-                    <PFSevenDaysDataList />
+                    <PFSevenDaysDataList/>
                 </Modal>
             ) : null}
         </>

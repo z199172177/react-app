@@ -13,7 +13,10 @@ const PFSevenDaysDataList: React.FC = () => {
 
     function PFProjectChart() {
         const config = {
-            data: data.reverse(),
+            data: data.sort((a: any, b: any) => {
+                // return stackOrder.indexOf(a.type) - stackOrder.indexOf(b.type);
+                return a.type.localeCompare(b.type);
+            }),
             isStack: true,
             xField: 'xField',
             yField: 'yField',

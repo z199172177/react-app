@@ -46,9 +46,9 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             if (tableLoading) {
                 return;
             }
-
+            let env = window.sessionStorage.getItem("currentDateEnv");
             setTableLoading(true);
-            const paramsInit: any = Object.assign({pageNum, pageSize}, queryParams, params);
+            const paramsInit: any = Object.assign({pageNum, pageSize, env}, queryParams, params);
             const resp: any = await queryPFinderList(paramsInit);
             setTableLoading(false);
             if (resp && Array.isArray(resp.data.data.records)) {
@@ -131,10 +131,10 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
                 if (record.env === "pre") {
                     color = 'processing';
                     envTxt = "预发";
-                }else if (record.env === "pro") {
+                } else if (record.env === "pro") {
                     color = 'error';
                     envTxt = "线上";
-                }else {
+                } else {
                     color = 'warning';
                     envTxt = "未知";
                 }
@@ -191,7 +191,7 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             key: 'detailUrl',
             width: 80,
             align: "center",
-            render: (text) => <a href={text} target="_blank"  rel="noreferrer" >链接</a>,
+            render: (text) => <a href={text} target="_blank" rel="noreferrer">链接</a>,
         },
     ];
 
