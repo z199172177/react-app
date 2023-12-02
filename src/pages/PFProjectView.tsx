@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Bar} from '@ant-design/plots';
 import {allProjectViewAsyncFetch, oneProjectViewAsyncFetch} from "../api/chartApi";
-import {Button, Card, Col, Form, Input, Modal, notification, Row, Space} from 'antd';
+import {Button, Card, Col, Form, Input, Modal, notification, Row, Space, Switch, Tooltip} from 'antd';
 import env from "../components/env";
 import {NotificationPlacement} from "antd/es/notification/interface";
 import PFSimpleDataList from "./PFSimpleDataList";
@@ -30,6 +30,8 @@ const PFProjectView: React.FC = () => {
     //查询参数
     const [queryParams, setQueryParams] = useState<MyPartial<PFinderListReqParams>>({}); //  当前查询参数
 
+    const [dataEnv, setDataEnv] = useState("");
+
     //表单
     const [form] = Form.useForm();
 
@@ -47,6 +49,7 @@ const PFProjectView: React.FC = () => {
         });
     };
 
+
     useEffect(() => {
         allProjectViewAsyncFetch(setData);
     }, []);
@@ -57,10 +60,10 @@ const PFProjectView: React.FC = () => {
         setChartDataLevel(1);
     };
 
-    //
-    const show7DayDate = () => {
+    const changeDataEnv = (open: boolean) => {
+        let currentDateEnv = open ? "pre" : "pro";
+        window.sessionStorage.setItem('currentDateEnv', currentDateEnv);
         allProjectViewAsyncFetch(setData);
-        setChartDataLevel(1);
     };
 
     function PFProjectChart() {
@@ -165,12 +168,20 @@ const PFProjectView: React.FC = () => {
                         <Row>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <div className="chart-btn">
-                                    <Button type="primary" htmlType="submit" onClick={()=>setSevenDaysDataListVisible(true)}>展示一周数据</Button>
+                                    <Button type="primary" htmlType="submit" onClick={()=>setSevenDaysDataListVisible(true)}>近一周数据</Button>
                                 </div>
                             </Col>
-                            <Col span={20} style={{textAlign: "right"}}>
+                            <Col span={2} style={{textAlign: "right"}}>
+                                <Space style={{height:"100%"}}>
+                                    <Switch defaultChecked onClick={e=>changeDataEnv(e)}/>
+                                    <Tooltip title="prompt text">
+                                        <span>预发</span>
+                                    </Tooltip>
+                                </Space>
+                            </Col>
+                            <Col span={18} style={{textAlign: "right"}}>
                                 <div className="chart-btn">
-                                    <Button type="primary" htmlType="submit" onClick={formReset}>刷新</Button>
+                                    <Button type="primary" htmlType="submit" onClick={formReset}>重置</Button>
                                 </div>
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
@@ -181,7 +192,7 @@ const PFProjectView: React.FC = () => {
                         </Row>
                     </Form>
                 </Card>
-                <Card style={{height: '100vh'}}>
+                <Card>
                     <PFProjectChart></PFProjectChart>
                 </Card>
             </div>

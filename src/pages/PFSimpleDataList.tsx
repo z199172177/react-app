@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, Modal, Pagination, PaginationProps, Space, Table, Tag} from "antd";
 import {MyPartial, PFinderListReqParams, PFinderSlowSqlListReqParams, PFinderTableItem} from "../interface/interface";
 import {DefaultPageSize} from "../components/DefaultPageSize";
@@ -12,13 +12,6 @@ interface Props {
     queryParams: any;
 }
 
-interface TableParams {
-    pagination?: TablePaginationConfig;
-    sortField?: string;
-    sortOrder?: string;
-    filters?: Record<string, FilterValue>;
-}
-
 const PFSimpleDataList: React.FC<Props> = (props) => {
     const [pageNum, setPageNum] = useState<number>(1); // 当前页码
     const [pageSize, setPageSize] = useState<number>(DefaultPageSize); // 每页条数
@@ -27,12 +20,6 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
     const [tableLoading, setTableLoading] = useState<boolean>(false); // 列表数据加载动画
     const [slowSqlListVisible, setSlowSqlListVisible] = useState<boolean>(false); // 是否显示导出弹窗
     const [slowSqlQueryParams, setSlowSqlQueryParams] = useState<MyPartial<PFinderSlowSqlListReqParams>>({}); //  当前查询参数
-    const [tableParams, setTableParams] = useState<TableParams>({
-        pagination: {
-            current: 1,
-            pageSize: 10,
-        },
-    });
     const {queryParams} = props;
 
     //分页
@@ -79,7 +66,7 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             title: '应用名称',
             dataIndex: 'appName',
             key: 'appName',
-            width: 150,
+            width: 200,
             render: (text, record) => {
                 if (record.component === 'Mysql') {
                     return (
@@ -129,10 +116,18 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             title: 'ip',
             dataIndex: 'ip',
             key: 'ip',
-            width: 200,
+            sorter: true,
+            width: 150
+        },
+        {
+            title: 'env',
+            dataIndex: 'env',
+            key: 'env',
+            sorter: true,
+            width: 100,
             render: (item, record) => {
-                let envTxt = "";
-                let color = "";
+                let envTxt: string;
+                let color: string;
                 if (record.env === "pre") {
                     color = 'processing';
                     envTxt = "预发";
@@ -146,7 +141,6 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
                 return (
                     <>
                         <Space>
-                            {item}
                             <Tag color={color}>
                                 {envTxt}
                             </Tag>
@@ -167,18 +161,18 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             key: 'component',
             width: 120
         },
-
         {
             title: '状态',
             dataIndex: 'state',
             key: 'state',
+            sorter: true,
             width: 80,
             render: (item) => {
-                let color = item == 1 ? 'green' : 'red';
+                let color = item === 1 ? 'green' : 'red';
                 return (
                     <>
                         <Tag color={color}>
-                            {item == 1 ? "成功" : "失败"}
+                            {item === 1 ? "成功" : "失败"}
                         </Tag>
                     </>
                 )
@@ -195,9 +189,9 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
             title: '调用链详情',
             dataIndex: 'detailUrl',
             key: 'detailUrl',
-            width: 130,
+            width: 80,
             align: "center",
-            render: (text) => <a href={text} target="_blank">链接</a>,
+            render: (text) => <a href={text} target="_blank"  rel="noreferrer" >链接</a>,
         },
     ];
 
@@ -227,7 +221,7 @@ const PFSimpleDataList: React.FC<Props> = (props) => {
     };
 
     function isBlank(value: any) {
-        return value === null || value == undefined || value === "";
+        return value === null || value === undefined || value === "";
     }
 
     return (

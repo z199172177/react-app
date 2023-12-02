@@ -20,13 +20,15 @@ export const dataStatisticsByDay = (setData: Function) => {
 };
 
 export const allProjectViewAsyncFetch = (setData: Function) => {
+    let  currentDateEnv = window.sessionStorage.getItem("currentDateEnv");
+    let jsonObj = {env: currentDateEnv};
     fetch(getBaseHost() + '/pFinderData/allProjectDataStatistics',
         {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: "",
+            body: JSON.stringify(jsonObj),
         }
     )
         .then((response) => {
