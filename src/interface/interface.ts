@@ -68,3 +68,12 @@ export interface PFinderSlowSqlListReqParams {
 }
 
 export type MyPartial<T> = { [K in keyof T]?: T[K] };
+
+//PFinder 数据源
+export interface PFinderDataSource {
+    appName: string;
+    platform: string;
+    dataType: string;
+    methodId: number;
+    metricName: string;
+}

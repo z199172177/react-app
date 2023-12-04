@@ -7,6 +7,7 @@ import {NotificationPlacement} from "antd/es/notification/interface";
 import PFSimpleDataList from "./PFSimpleDataList";
 import {MyPartial, PFinderListReqParams} from "../interface/interface";
 import PFSevenDaysDataList from "./PFSevenDaysDataList";
+import AddDataSource from "./AddDataSource";
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
@@ -190,8 +191,8 @@ const PFProjectView: React.FC = () => {
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <div className="chart-btn">
-                                    <Button type="primary" disabled={true} htmlType="submit"
-                                            onClick={() => setSettingDsVisible(true)}>设置</Button>
+                                    <Button type="primary" htmlType="submit"
+                                            onClick={() => setSettingDsVisible(true)}>数据订阅</Button>
                                 </div>
                             </Col>
                         </Row>
@@ -209,7 +210,7 @@ const PFProjectView: React.FC = () => {
                     open={settingDsVisible}
                     wrapClassName="pFinder-setting-ds-modal"
                     closable={true}
-                    width={500}
+                    // width={800}
                     onCancel={() => {
                         setSettingDsVisible(false);
                     }}
@@ -217,15 +218,7 @@ const PFProjectView: React.FC = () => {
                     footer={<></>}
                 >
                     <Space direction="vertical" size="large" style={{width: '100%'}}>
-                        <Space.Compact style={{width: '100%'}}>
-                            <Input defaultValue={env.apiUrl} onChange={(e) => setDsInputValue(e.target.value)}/>
-                            <Button type="primary" onClick={() => {
-                                env.apiUrl = dsInputValue;
-                                window.sessionStorage.setItem('apiUrl', dsInputValue);
-                                openNotification('top', "success", '设置成功');
-                                setSettingDsVisible(false);
-                            }}>Submit</Button>
-                        </Space.Compact>
+                        <AddDataSource/>
                     </Space>
                 </Modal>
             ) : null}
