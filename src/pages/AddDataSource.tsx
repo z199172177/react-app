@@ -4,22 +4,6 @@ import {Button, Divider, Form, Input, message, Select, Space, Switch,} from 'ant
 const AddDataSource: React.FC = () => {
     const [form] = Form.useForm();
 
-    const initQueryParams = () => {
-        const timeParams = {};
-        const formData: PlusFilterForm = filterForm ? filterForm.current.getFormValue() : {};
-        const [receiveStartTime, receiveEndTime] = formData.receiveTime ?? [];
-        if (receiveStartTime && receiveEndTime) {
-            Object.assign(timeParams, {
-                receiveStartTime,
-                receiveEndTime,
-                receiveTime: undefined,
-            });
-        }
-        const paramsInit = Object.assign(formData, timeParams);
-        setQueryParams(paramsInit);
-        return paramsInit;
-    };
-
     const onFinish = () => {
         message.success('提交成功!');
     };

@@ -77,3 +77,13 @@ export interface PFinderDataSource {
     methodId: number;
     metricName: string;
 }
+
+//Sql 优化
+export interface SqlDiagnosticReq {
+    index: number;
+    sql: string;
+    elapsedTime: number;
+    prompt: string;
+    componentDisabled: any;
+
+}

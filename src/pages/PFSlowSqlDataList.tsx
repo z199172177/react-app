@@ -8,8 +8,8 @@ import {ColumnsType} from "antd/es/table";
 import {DefaultPageSize} from "../components/DefaultPageSize";
 import {queryPFinderSlowSqlList} from "../api/service";
 import {MyPartial, PFinderSlowSqlListReqParams, PFinderSlowSqlTableItem} from "../interface/interface";
-import CustomCodeBlock from "../components/CustomCodeBlock";
-import './PFSlowSqlDataList.css'; // 导入自定义样式文件
+import './PFSlowSqlDataList.css';
+import CustomCodeBlock from "../components/CustomCodeBlock"; // 导入自定义样式文件
 
 
 interface Props {
@@ -26,7 +26,7 @@ const PFSlowSqlDataList: React.FC<Props> = (props) => {
     const {slowSqlQueryParams} = props;
 
     const [sqlFormatVisible, setSqlFormatVisible] = useState<boolean>(false); // sql格式化弹窗
-    const [currentSql, setCurrentSql] = useState<string>(''); // 当前sql
+    const [currentSelectedRecord, setCurrentSelectedRecord] = useState<any>(); // 当前选中的记录
 
     //分页
     const itemRender: PaginationProps['itemRender'] = (_, type, originalElement) => {
@@ -96,11 +96,14 @@ const PFSlowSqlDataList: React.FC<Props> = (props) => {
     };
 
     const onRowClick = (record: any, index: any, event: any) => {
-        let sqlInfo = record.sqlInfo;
-        setCurrentSql(sqlInfo);
-        setSqlFormatVisible(true);
         //阻止默认事件
         event.stopPropagation();
+        if (record === null || record === undefined || record === "") {
+            return;
+        }
+
+        setCurrentSelectedRecord(record);
+        setSqlFormatVisible(true);
     };
 
     useEffect(() => {
@@ -147,7 +150,7 @@ const PFSlowSqlDataList: React.FC<Props> = (props) => {
                     open={sqlFormatVisible}
                     wrapClassName="pFinder-setting-ds-modal"
                     closable={true}
-                    width={1000}
+                    width={1500}
                     onCancel={() => {
                         setSqlFormatVisible(false);
                     }}
@@ -155,7 +158,7 @@ const PFSlowSqlDataList: React.FC<Props> = (props) => {
                     footer={<></>}
                 >
                     <Space direction="vertical" size="large" style={{width: '100%'}}>
-                        <CustomCodeBlock code={currentSql}/>
+                        <CustomCodeBlock reqSql={currentSelectedRecord.sqlInfo} reqElapsedTime={currentSelectedRecord.elapsedTime}/>
                     </Space>
                 </Modal>
             ) : null}

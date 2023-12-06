@@ -105,3 +105,6 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 * 代码高亮：npm install react-highlight
 * SQL格式化：npm install sql-formatter 
 * 代码Copy：npm install react-copy-to-clipboard
+* markdown：npm install react-markdown --save
+* github风格的markdown：npm install remark-gfm --save
+* 官方推荐的样式：npm install rehype-highlight --save

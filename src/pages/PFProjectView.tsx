@@ -97,9 +97,6 @@ const PFProjectView: React.FC = () => {
         return (<Bar {...config} onReady={(bar) => {
             bar.on('interval:click', (...args: any) => {
                 const data = args[0].data?.data;
-                console.log(data, 'interval:click')
-
-
                 let type = data.type;
                 let appName = data.appName;
 
