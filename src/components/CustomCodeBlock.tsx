@@ -12,7 +12,7 @@ import {sqlDiagnosticFetch} from "../api/chartApi";
 import {SqlDiagnosticReq} from "../interface/interface";
 import {useUpdateEffect} from "../utils/EffectUtils";
 import Paragraph from "antd/lib/typography/Paragraph";
-
+import remarkGfm from 'remark-gfm'
 
 interface Props {
     reqSql: string;
@@ -54,7 +54,15 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
     const [sqlDiagnosticBtnDisabledFlag, setSqlDiagnosticBtnDisabledFlag] = useState(false);
     const sqlDiagnosticBtnClick = () => {
         if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
-            message.error("请先提交【SQL】与【执行时间】，再进行下一步操作")
+            message.error("请先提交【SQL】与【执行时间】，再进行下一步操作").then(r => {});
+            return;
+        }
+        if (reqSql.length> 1000) {
+            message.error("SQL过长，长度不能超过1000个字符").then(r => {});
+            return;
+        }
+        if (reqElapsedTime > (1000 * 60)) {
+            message.error("执行时间过长").then(r => {});
             return;
         }
         setSqlDiagnosticBtnDisabledFlag(true);
@@ -63,7 +71,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
 
     //SQL Explain 文本域数据对象、文本域onChange事件、SQL Explain按钮点击事件
     const [sqlExplainBtnDisabledFlag, setSqlExplainBtnDisabledFlag] = useState(false);
-    const [sqlExplainTextAreaValue, setSqlExplainTextAreaValue] = useState();
+    const [sqlExplainTextAreaValue, setSqlExplainTextAreaValue] = useState("");
     const handleSqlExplainTextAreaChange = (e: any) => {
         setSqlExplainTextAreaValue(e.target.value);
     };
@@ -75,13 +83,18 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         if (sqlExplainTextAreaValue === undefined || sqlExplainTextAreaValue === '') {
             return;
         }
+        if (sqlExplainTextAreaValue.length> 2000) {
+            message.error("SQL Explain过长，长度不能超过2000个字符").then(r => {});
+            return;
+        }
+
         setSqlExplainBtnDisabledFlag(true);
         setReqObject((pre)=>{return {...pre, index: 2, sql: reqSql, elapsedTime: reqElapsedTime, prompt: sqlExplainTextAreaValue, componentDisabled:setSqlExplainBtnDisabledFlag};})
     }
 
     //表结构索引 文本域数据对象、文本域onChange事件、表结构索引提交按钮点击事件
     const [tableAndIndexBtnDisabledFlag, setTableAndIndexBtnDisabledFlag] = useState(false);
-    const [tableAndIndexTextAreaValue, setTableAndIndexTextAreaValue] = useState();
+    const [tableAndIndexTextAreaValue, setTableAndIndexTextAreaValue] = useState("");
     const handleTableAndIndexTextAreaChange = (e: any) => {
         setTableAndIndexTextAreaValue(e.target.value);
     };
@@ -91,6 +104,10 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
             return;
         }
         if (tableAndIndexTextAreaValue === undefined || tableAndIndexTextAreaValue === '') {
+            return;
+        }
+        if (tableAndIndexTextAreaValue.length> 3000) {
+            message.error("SQL Explain过长，长度不能超过3000个字符").then(r => {});
             return;
         }
         setTableAndIndexBtnDisabledFlag(true);
@@ -196,7 +213,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
                 <pre>
                     <Spin tip="Loading" size="large"
                           spinning={sqlDiagnosticBtnDisabledFlag || sqlExplainBtnDisabledFlag || tableAndIndexBtnDisabledFlag}>
-                         <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                         <ReactMarkdown rehypePlugins={[remarkGfm]}>
                             {sqlDiagnosticResult}
                         </ReactMarkdown>
                     </Spin>
@@ -210,17 +227,17 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
 
             <div style={{marginTop: 24}}>
                 {current < steps.length - 1 && (
-                    <Button type="primary" onClick={() => next()}>
+                    <Button type="primary" disabled={sqlDiagnosticBtnDisabledFlag || sqlExplainBtnDisabledFlag || tableAndIndexBtnDisabledFlag} onClick={() => next()}>
                         下一步
                     </Button>
                 )}
                 {current === steps.length - 1 && (
-                    <Button type="primary" onClick={() => next()}>
+                    <Button type="primary" disabled={sqlDiagnosticBtnDisabledFlag || sqlExplainBtnDisabledFlag || tableAndIndexBtnDisabledFlag} onClick={() => next()}>
                         完成
                     </Button>
                 )}
                 {current > 0 && (
-                    <Button style={{margin: '0 8px'}} onClick={() => prev()}>
+                    <Button style={{margin: '0 8px'}} disabled={sqlDiagnosticBtnDisabledFlag || sqlExplainBtnDisabledFlag || tableAndIndexBtnDisabledFlag} onClick={() => prev()}>
                         上一步
                     </Button>
                 )}
