@@ -4,7 +4,7 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import 'highlight.js/styles/zenburn.css'
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {prism} from "react-syntax-highlighter/dist/esm/styles/prism";
-import {Button, message, Steps, theme, Typography} from "antd";
+import {Button, message, Spin, Steps, theme, Typography} from "antd";
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import TextArea from "antd/es/input/TextArea";
@@ -21,10 +21,15 @@ interface Props {
 
 const CustomCodeBlock: React.FC<Props> = (props) => {
     const {reqSql, reqElapsedTime} = props;
+
     //对话提示框
     const [sqlCopyButtonText, setSqlCopyButtonText] = useState('Copy SQL');
     //SQL Copy按钮点击事件
     const sqlCopyBtnClick = (msg: string) => {
+        if (reqSql === undefined || reqSql === '') {
+            message.error("请先提交【SQL】")
+            return;
+        }
         setSqlCopyButtonText(msg);
     };
 
@@ -49,6 +54,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
     const [sqlDiagnosticBtnDisabledFlag, setSqlDiagnosticBtnDisabledFlag] = useState(false);
     const sqlDiagnosticBtnClick = () => {
         if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
+            message.error("请先提交【SQL】与【执行时间】，再进行下一步操作")
             return;
         }
         setSqlDiagnosticBtnDisabledFlag(true);
@@ -62,6 +68,10 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         setSqlExplainTextAreaValue(e.target.value);
     };
     const sqlExplainDiagnosticBtnClick = () => {
+        if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
+            message.error("请先提交【SQL】与【执行时间】，再进行下一步操作")
+            return;
+        }
         if (sqlExplainTextAreaValue === undefined || sqlExplainTextAreaValue === '') {
             return;
         }
@@ -76,6 +86,10 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         setTableAndIndexTextAreaValue(e.target.value);
     };
     const tableAndIndexDiagnosticBtnClick = () => {
+        if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
+            message.error("请先提交【SQL】与【执行时间】，再进行下一步操作")
+            return;
+        }
         if (tableAndIndexTextAreaValue === undefined || tableAndIndexTextAreaValue === '') {
             return;
         }
@@ -111,7 +125,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
                     <Typography>
                         <TextArea placeholder="请输入SQL Explain 结果" value={sqlExplainTextAreaValue} onChange={handleSqlExplainTextAreaChange} rows={10} style={{height: '100%', resize: 'none'}}/>
                         <Button type="primary" style={{marginBottom: '10px', marginTop: '10px'}} loading={sqlExplainBtnDisabledFlag} disabled={sqlExplainBtnDisabledFlag} onClick={() => {sqlExplainDiagnosticBtnClick()}}>
-                            SQL分析
+                            SQL Explain分析
                         </Button>
                     </Typography>
 
@@ -124,7 +138,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
                     <Typography>
                         <TextArea placeholder="请输入表创建语句、索引" value={tableAndIndexTextAreaValue} onChange={handleTableAndIndexTextAreaChange} rows={10} style={{height: '100%', resize: 'none'}}/>
                         <Button type="primary" style={{marginBottom: '10px', marginTop: '10px'}} loading={tableAndIndexBtnDisabledFlag} disabled={tableAndIndexBtnDisabledFlag} onClick={() => {tableAndIndexDiagnosticBtnClick()}}>
-                            SQL分析
+                            表结构和Index分析
                         </Button>
                     </Typography>
                 </>,
@@ -134,6 +148,10 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
     const {token} = theme.useToken();
     const [current, setCurrent] = useState(0);
     const next = () => {
+        if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
+            message.error("请先提交【SQL】与【执行时间】，再进行下一步操作")
+            return;
+        }
         if (sqlDiagnosticResult === defSqlDiagnosticResult) {
             message.error("请先点击【SQL分析】按钮，再进行下一步操作")
             return;
@@ -176,9 +194,12 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         <>
             <Typography>
                 <pre>
-                     <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
-                        {sqlDiagnosticResult}
-                    </ReactMarkdown>
+                    <Spin tip="Loading" size="large"
+                          spinning={sqlDiagnosticBtnDisabledFlag || sqlExplainBtnDisabledFlag || tableAndIndexBtnDisabledFlag}>
+                         <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                            {sqlDiagnosticResult}
+                        </ReactMarkdown>
+                    </Spin>
                 </pre>
             </Typography>
 
