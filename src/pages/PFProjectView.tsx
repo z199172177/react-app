@@ -61,7 +61,7 @@ const PFProjectView: React.FC = () => {
     };
 
     const changeDataEnv = (open: boolean) => {
-        let currentDateEnv = open ? "pre" : "pro";
+        let currentDateEnv = open ? "pro" : "pre";
         window.sessionStorage.setItem('currentDateEnv', currentDateEnv);
         allProjectViewAsyncFetch(setData);
     };
@@ -174,10 +174,10 @@ const PFProjectView: React.FC = () => {
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <Space style={{height: "100%"}}>
-                                    <Switch checked={window.sessionStorage.getItem("currentDateEnv") === "pre"}
+                                    <Switch checked={window.sessionStorage.getItem("currentDateEnv") === "pro"}
                                             onClick={e => changeDataEnv(e)}/>
                                     <Tooltip title="prompt text">
-                                        <span>预发</span>
+                                        <span>仅线上</span>
                                     </Tooltip>
                                 </Space>
                             </Col>
