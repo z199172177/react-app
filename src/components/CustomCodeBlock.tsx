@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import {format} from 'sql-formatter'
+import {format, sql} from 'sql-formatter'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import 'highlight.js/styles/zenburn.css'
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {prism} from "react-syntax-highlighter/dist/esm/styles/prism";
-import {Button, message, Spin, Steps, theme, Typography} from "antd";
+import {Button, Form, Input, message, Modal, Space, Spin, Steps, theme, Typography} from "antd";
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import TextArea from "antd/es/input/TextArea";
@@ -13,6 +13,7 @@ import {SqlDiagnosticReq} from "../interface/interface";
 import {useUpdateEffect} from "../utils/EffectUtils";
 import Paragraph from "antd/lib/typography/Paragraph";
 import remarkGfm from 'remark-gfm'
+import env from "./env";
 
 interface Props {
     reqSql: string;
@@ -21,12 +22,15 @@ interface Props {
 
 const CustomCodeBlock: React.FC<Props> = (props) => {
     const {reqSql, reqElapsedTime} = props;
+    const [reqSqlByEdit, setReqSqlByEdit] = useState(reqSql ? reqSql : "select * from dual;");
+    const [reqElapsedTimeByEdit, setReqElapsedTimeByEdit] = useState<number>(reqElapsedTime ? reqElapsedTime : 0);
 
     //对话提示框
     const [sqlCopyButtonText, setSqlCopyButtonText] = useState('Copy SQL');
+
     //SQL Copy按钮点击事件
     const sqlCopyBtnClick = (msg: string) => {
-        if (reqSql === undefined || reqSql === '') {
+        if (reqSqlByEdit === undefined || reqSqlByEdit === '') {
             message.error("请先提交【SQL】")
             return;
         }
@@ -34,7 +38,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
     };
 
     //sql分析结果
-    const defSqlDiagnosticResult = '点击**SQL分析**按钮，查询优化建议';
+    const defSqlDiagnosticResult = '双击「SQL面板」编辑SQL，点击「SQL分析」按钮，查询优化建议';
     const [sqlDiagnosticResult, setSqlDiagnosticResult] = useState(defSqlDiagnosticResult);
     //sql分析请求对象
     const [reqObject, setReqObject] = useState<SqlDiagnosticReq>({
@@ -50,23 +54,37 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         sqlDiagnosticFetch(reqObject, setSqlDiagnosticResult);
     }, [reqObject]);
 
+    //Sql 编辑弹窗
+    const [SqlEditVisible, setSqlEditVisible] = useState<boolean>(false); // 是否显示导出弹窗
+    // const [sqlExplainTextAreaValue, setSqlExplainTextAreaValue] = useState("");
+    const handleSqlEditAreaChange = (e: any) => {
+        setReqSqlByEdit(e.target.value);
+    };
+    const sqlEditBtnClick = () => {
+        setSqlEditVisible(false);
+    }
+
+    const elapsedTimeInputChangeHandle = (value: any) => {
+        setReqElapsedTimeByEdit(value);
+    };
+
     //SQL分析按钮点击事件
     const [sqlDiagnosticBtnDisabledFlag, setSqlDiagnosticBtnDisabledFlag] = useState(false);
     const sqlDiagnosticBtnClick = () => {
-        if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
+        if (reqSqlByEdit === undefined || reqSqlByEdit === '' || reqElapsedTimeByEdit === undefined || reqElapsedTimeByEdit === 0) {
             message.error("请先提交【SQL】与【执行时间】，再进行下一步操作").then(r => {});
             return;
         }
-        if (reqSql.length> 1000) {
+        if (reqSqlByEdit.length> 1000) {
             message.error("SQL过长，长度不能超过1000个字符").then(r => {});
             return;
         }
-        if (reqElapsedTime > (1000 * 60)) {
+        if (reqElapsedTimeByEdit > (1000 * 60)) {
             message.error("执行时间过长").then(r => {});
             return;
         }
         setSqlDiagnosticBtnDisabledFlag(true);
-        setReqObject((pre)=>{return {...pre, index: 1, sql: reqSql, elapsedTime: reqElapsedTime, componentDisabled: setSqlDiagnosticBtnDisabledFlag};})
+        setReqObject((pre)=>{return {...pre, index: 1, sql: reqSqlByEdit, elapsedTime: reqElapsedTimeByEdit, componentDisabled: setSqlDiagnosticBtnDisabledFlag};})
     }
 
     //SQL Explain 文本域数据对象、文本域onChange事件、SQL Explain按钮点击事件
@@ -76,7 +94,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         setSqlExplainTextAreaValue(e.target.value);
     };
     const sqlExplainDiagnosticBtnClick = () => {
-        if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
+        if (reqSqlByEdit === undefined || reqSqlByEdit === '' || reqElapsedTimeByEdit === undefined || reqElapsedTimeByEdit === 0) {
             message.error("请先提交【SQL】与【执行时间】，再进行下一步操作")
             return;
         }
@@ -89,7 +107,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         }
 
         setSqlExplainBtnDisabledFlag(true);
-        setReqObject((pre)=>{return {...pre, index: 2, sql: reqSql, elapsedTime: reqElapsedTime, prompt: sqlExplainTextAreaValue, componentDisabled:setSqlExplainBtnDisabledFlag};})
+        setReqObject((pre)=>{return {...pre, index: 2, sql: reqSqlByEdit, elapsedTime: reqElapsedTimeByEdit, prompt: sqlExplainTextAreaValue, componentDisabled:setSqlExplainBtnDisabledFlag};})
     }
 
     //表结构索引 文本域数据对象、文本域onChange事件、表结构索引提交按钮点击事件
@@ -99,7 +117,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         setTableAndIndexTextAreaValue(e.target.value);
     };
     const tableAndIndexDiagnosticBtnClick = () => {
-        if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
+        if (reqSqlByEdit === undefined || reqSqlByEdit === '' || reqElapsedTimeByEdit === undefined || reqElapsedTimeByEdit === 0) {
             message.error("请先提交【SQL】与【执行时间】，再进行下一步操作")
             return;
         }
@@ -111,7 +129,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
             return;
         }
         setTableAndIndexBtnDisabledFlag(true);
-        setReqObject((pre)=>{return {...pre, index: 3, sql: reqSql, elapsedTime: reqElapsedTime, prompt: tableAndIndexTextAreaValue, componentDisabled: setTableAndIndexBtnDisabledFlag};})
+        setReqObject((pre)=>{return {...pre, index: 3, sql: reqSqlByEdit, elapsedTime: reqElapsedTimeByEdit, prompt: tableAndIndexTextAreaValue, componentDisabled: setTableAndIndexBtnDisabledFlag};})
     }
 
     const steps = [
@@ -119,12 +137,12 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
             title: '提交SQL',
             content: <>
                 <Typography>
-                    <Paragraph>
-                        <SyntaxHighlighter language="sql" style={prism}>
-                            {format(reqSql)}
+                    <Paragraph style={{cursor: 'pointer'}} onDoubleClick={e=>{setSqlEditVisible(true)}}>
+                        <SyntaxHighlighter language="sql" style={prism} >
+                            {format(reqSqlByEdit)}
                         </SyntaxHighlighter>
                     </Paragraph>
-                    <CopyToClipboard text={reqSql}>
+                    <CopyToClipboard text={reqSqlByEdit}>
                         <Button type="primary" style={{marginBottom: '10px'}} onClick={() => {sqlCopyBtnClick("Success！");}}>
                             {sqlCopyButtonText}
                         </Button>
@@ -165,7 +183,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
     const {token} = theme.useToken();
     const [current, setCurrent] = useState(0);
     const next = () => {
-        if (reqSql === undefined || reqSql === '' || reqElapsedTime === undefined || reqElapsedTime === 0) {
+        if (reqSqlByEdit === undefined || reqSqlByEdit === '' || reqElapsedTimeByEdit === undefined || reqElapsedTimeByEdit === 0) {
             message.error("请先提交【SQL】与【执行时间】，再进行下一步操作")
             return;
         }
@@ -211,8 +229,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
         <>
             <Typography>
                 <pre>
-                    <Spin tip="Loading" size="large"
-                          spinning={sqlDiagnosticBtnDisabledFlag || sqlExplainBtnDisabledFlag || tableAndIndexBtnDisabledFlag}>
+                    <Spin tip="Loading" size="large" spinning={sqlDiagnosticBtnDisabledFlag || sqlExplainBtnDisabledFlag || tableAndIndexBtnDisabledFlag}>
                          <ReactMarkdown rehypePlugins={[remarkGfm]}>
                             {sqlDiagnosticResult}
                         </ReactMarkdown>
@@ -242,6 +259,29 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
                     </Button>
                 )}
             </div>
+
+            {SqlEditVisible ? (
+                <Modal
+                    title="配置数据源"
+                    open={SqlEditVisible}
+                    wrapClassName="pFinder-setting-ds-modal"
+                    closable={true}
+                    width={800}
+                    onCancel={() => {
+                        setSqlEditVisible(false);
+                    }}
+                    maskClosable={false}
+                    footer={<></>}
+                >
+                    <Typography>
+                        <TextArea placeholder="请输入您的SQL，并点击「提交」" value={reqSqlByEdit} onChange={handleSqlEditAreaChange} rows={10} style={{height: '100%', resize: 'none'}}/>
+                        <Input type={"number"} placeholder="请填写SQL执行时间(毫秒). 例如: 500" value={reqElapsedTimeByEdit} onChange={(e)=>{elapsedTimeInputChangeHandle(e.target.value)}}/>
+                        <Button type="primary" style={{marginBottom: '10px', marginTop: '10px'}} onClick={() => {sqlEditBtnClick()}}>
+                            提交
+                        </Button>
+                    </Typography>
+                </Modal>
+            ) : null}
         </>
     );
 }
