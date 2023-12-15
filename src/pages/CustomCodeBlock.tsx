@@ -260,7 +260,7 @@ const CustomCodeBlock: React.FC<Props> = (props) => {
 
             {SqlEditVisible ? (
                 <Modal
-                    title="配置数据源"
+                    title="慢SQL提交"
                     open={SqlEditVisible}
                     wrapClassName="pFinder-setting-ds-modal"
                     closable={true}

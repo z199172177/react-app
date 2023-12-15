@@ -1,5 +1,5 @@
 import {getBaseHost} from "../components/env";
-import {SqlDiagnosticReq} from "../interface/interface";
+import {ErrLogDiagnosticReq, SqlDiagnosticReq} from "../interface/interface";
 
 export const dataStatisticsByDay = (setData: Function) => {
     fetch(getBaseHost() + '/pFinderData/dataStatisticsByDay',
@@ -21,7 +21,7 @@ export const dataStatisticsByDay = (setData: Function) => {
 };
 
 export const allProjectViewAsyncFetch = (setData: Function) => {
-    let  currentDateEnv = window.sessionStorage.getItem("currentDateEnv");
+    let currentDateEnv = window.sessionStorage.getItem("currentDateEnv");
     let jsonObj = {env: currentDateEnv};
     fetch(getBaseHost() + '/pFinderData/allProjectDataStatistics',
         {
@@ -84,11 +84,11 @@ export const sqlDiagnosticFetch = (reqObject: SqlDiagnosticReq, setSqlDiagnostic
     let url = "";
     if (reqObject.index == 1) {
         url = getBaseHost() + '/sqlDr/sqlDiagnostic';
-    }else if (reqObject.index == 2) {
+    } else if (reqObject.index == 2) {
         url = getBaseHost() + '/sqlDr/sqlExplainDiagnostic';
-    }else if (reqObject.index == 3) {
+    } else if (reqObject.index == 3) {
         url = getBaseHost() + '/sqlDr/tableAndIndexDiagnostic';
-    }else {
+    } else {
         return;
     }
     fetch(url, {
@@ -109,6 +109,32 @@ export const sqlDiagnosticFetch = (reqObject: SqlDiagnosticReq, setSqlDiagnostic
             }
             setSqlDiagnosticResult(result);
             reqObject.componentDisabled(false);
+        })
+        .catch((error) => {
+            console.log('fetch data failed', error);
+        });
+};
+
+
+export const errLogDiagnosticFetch = (reqObject: ErrLogDiagnosticReq, setErrLogDiagnosticResult: Function) => {
+    let url = "";
+    fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(reqObject),
+        }
+    )
+        .then((response) => {
+            return response.json();
+        })
+        .then((json) => {
+            let result = json.data;
+            if (result === null || result === undefined || result === "") {
+                result = json.msg;
+            }
+            setErrLogDiagnosticResult(result);
         })
         .catch((error) => {
             console.log('fetch data failed', error);

@@ -78,12 +78,16 @@ export interface PFinderDataSource {
     metricName: string;
 }
 
-//Sql 优化
+//慢SQL分析
 export interface SqlDiagnosticReq {
     index: number;
     sql: string;
     elapsedTime: number;
     prompt: string;
     componentDisabled: any;
+}
 
+//异常日志分析
+export interface ErrLogDiagnosticReq {
+    logs:string
 }
