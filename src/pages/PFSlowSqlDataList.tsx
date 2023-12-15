@@ -9,7 +9,7 @@ import {DefaultPageSize} from "../components/DefaultPageSize";
 import {queryPFinderSlowSqlList} from "../api/service";
 import {MyPartial, PFinderSlowSqlListReqParams, PFinderSlowSqlTableItem} from "../interface/interface";
 import './PFSlowSqlDataList.css';
-import CustomCodeBlock from "../components/CustomCodeBlock"; // 导入自定义样式文件
+import CustomCodeBlock from "./CustomCodeBlock"; // 导入自定义样式文件
 
 
 interface Props {

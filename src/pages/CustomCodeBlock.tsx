@@ -1,19 +1,17 @@
 import React, {useState} from "react";
-import {format, sql} from 'sql-formatter'
+import {format} from 'sql-formatter'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import 'highlight.js/styles/zenburn.css'
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {prism} from "react-syntax-highlighter/dist/esm/styles/prism";
-import {Button, Form, Input, message, Modal, Space, Spin, Steps, theme, Typography} from "antd";
+import {Button, Input, message, Modal, Spin, Steps, theme, Typography} from "antd";
 import ReactMarkdown from 'react-markdown'
-import rehypeHighlight from 'rehype-highlight'
 import TextArea from "antd/es/input/TextArea";
 import {sqlDiagnosticFetch} from "../api/chartApi";
 import {SqlDiagnosticReq} from "../interface/interface";
 import {useUpdateEffect} from "../utils/EffectUtils";
 import Paragraph from "antd/lib/typography/Paragraph";
 import remarkGfm from 'remark-gfm'
-import env from "./env";
 
 interface Props {
     reqSql: string;
