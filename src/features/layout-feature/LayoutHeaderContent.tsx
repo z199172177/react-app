@@ -22,8 +22,8 @@ const LayoutHeaderContent: React.FC<Props> = (props) => {
             icon: <MailOutlined/>,
         },
         {
-            label: '异常日志分析',
-            key: 'errorLogDiagnostic',
+            label: (<Link to="/errLogDiagnostic">异常日志分析</Link>),
+            key: 'errLogDiagnostic',
             icon: <SettingOutlined/>
         },
     ];

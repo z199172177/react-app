@@ -4,15 +4,17 @@ import PFDataList from "../pages/PFDataList";
 import PFProjectView from "../pages/PFProjectView";
 import SqlDiagnosticLayout from "../features/layout-feature/SqlDiagnosticLayout";
 import PFViewerLayout from "../features/layout-feature/PFViewerLayout";
+import ErrLogDiagnosticLayout from "../features/layout-feature/ErrLogDiagnosticLayout";
 
 function RouterList() {
     return (
         <Routes>
-            <Route path="/" element={<PFViewerLayout />}/>
-            <Route path="/slowSqlDiagnostic" element={<SqlDiagnosticLayout />}/>
-            <Route path="/home" element={<PFProjectView />}/>
-            <Route path="/PFViewer" element={<PFViewerLayout />}/>
-            <Route path="/PFDataList" element={<PFDataList />}/>
+            <Route path="/" element={<PFViewerLayout/>}/>
+            <Route path="/slowSqlDiagnostic" element={<SqlDiagnosticLayout/>}/>
+            <Route path="/errLogDiagnostic" element={<ErrLogDiagnosticLayout/>}/>
+            <Route path="/home" element={<PFProjectView/>}/>
+            <Route path="/PFViewer" element={<PFViewerLayout/>}/>
+            <Route path="/PFDataList" element={<PFDataList/>}/>
         </Routes>
     );
 }
