@@ -117,7 +117,7 @@ export const sqlDiagnosticFetch = (reqObject: SqlDiagnosticReq, setSqlDiagnostic
 
 
 export const errLogDiagnosticFetch = (reqObject: ErrLogDiagnosticReq, setErrLogDiagnosticResult: Function) => {
-    let url = "";
+    let url = getBaseHost() + '/errLogDr/errLogDiagnostic';
     fetch(url, {
             method: "POST",
             headers: {
@@ -135,6 +135,7 @@ export const errLogDiagnosticFetch = (reqObject: ErrLogDiagnosticReq, setErrLogD
                 result = json.msg;
             }
             setErrLogDiagnosticResult(result);
+            reqObject.componentDisabled(false);
         })
         .catch((error) => {
             console.log('fetch data failed', error);

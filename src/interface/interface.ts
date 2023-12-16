@@ -89,5 +89,6 @@ export interface SqlDiagnosticReq {
 
 //异常日志分析
 export interface ErrLogDiagnosticReq {
-    logs:string
+    logContent: string;
+    componentDisabled: any;
 }

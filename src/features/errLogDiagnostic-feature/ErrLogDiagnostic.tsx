@@ -3,9 +3,9 @@ import {Button, message, Spin, Typography} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {ErrLogDiagnosticReq, SqlDiagnosticReq} from "../../interface/interface";
+import {ErrLogDiagnosticReq} from "../../interface/interface";
 import {useUpdateEffect} from "../../utils/EffectUtils";
-import {errLogDiagnosticFetch, sqlDiagnosticFetch} from "../../api/chartApi";
+import {errLogDiagnosticFetch} from "../../api/chartApi";
 
 const ErrLogDiagnostic: React.FC = () => {
     const [logDiagnosticBtnDisabledFlag, setLogDiagnosticBtnDisabledFlag] = useState(false);
@@ -25,7 +25,9 @@ const ErrLogDiagnostic: React.FC = () => {
         }
 
         setLogDiagnosticBtnDisabledFlag(true);
-        // setReqObject((pre)=>{return {...pre, index: 2, sql: reqSqlByEdit, elapsedTime: reqElapsedTimeByEdit, prompt: sqlExplainTextAreaValue, componentDisabled:setSqlExplainBtnDisabledFlag};})
+        setReqObject((pre) => {
+            return {...pre, logContent: errLogTextAreaValue, componentDisabled: setLogDiagnosticBtnDisabledFlag}
+        });
     }
 
     //sql分析结果
@@ -33,7 +35,8 @@ const ErrLogDiagnostic: React.FC = () => {
     const [errLogDiagnosticResult, setErrLogDiagnosticResult] = useState(defErrLogDiagnosticResult);
     //sql分析请求对象
     const [reqObject, setReqObject] = useState<ErrLogDiagnosticReq>({
-        logs: "",
+        logContent: "",
+        componentDisabled: null,
     });
 
     //日志分析请求
@@ -52,12 +55,11 @@ const ErrLogDiagnostic: React.FC = () => {
                     </Spin>
                 </pre>
 
-                <TextArea placeholder="请输入您的异常日志，然后点击「日志分析」按钮查看结果。"
+                <TextArea placeholder="请输入您的异常日志，然后点击「日志分析」按钮查看结果。" disabled={logDiagnosticBtnDisabledFlag}
                           onChange={handleErrLogTextAreaChange} rows={20} style={{height: '100%', resize: 'none'}}/>
                 <Button type="primary" style={{marginBottom: '10px', marginTop: '10px'}}
-                        loading={logDiagnosticBtnDisabledFlag} disabled={logDiagnosticBtnDisabledFlag} onClick={() => {
-                    errLogDiagnosticBtnClick()
-                }}>
+                        loading={logDiagnosticBtnDisabledFlag} disabled={logDiagnosticBtnDisabledFlag}
+                        onClick={() => {errLogDiagnosticBtnClick()}}>
                     日志分析
                 </Button>
             </Typography>
