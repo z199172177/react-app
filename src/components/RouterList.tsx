@@ -5,6 +5,7 @@ import PFProjectView from "../pages/PFProjectView";
 import SqlDiagnosticLayout from "../features/layout-feature/SqlDiagnosticLayout";
 import PFViewerLayout from "../features/layout-feature/PFViewerLayout";
 import ErrLogDiagnosticLayout from "../features/layout-feature/ErrLogDiagnosticLayout";
+import GitDiffAnalysisLayout from "../features/layout-feature/GitDiffAnalysisLayout";
 
 function RouterList() {
     return (
@@ -15,6 +16,7 @@ function RouterList() {
             <Route path="/home" element={<PFProjectView/>}/>
             <Route path="/PFViewer" element={<PFViewerLayout/>}/>
             <Route path="/PFDataList" element={<PFDataList/>}/>
+            <Route path="/gitDiffAnalysis" element={<GitDiffAnalysisLayout />}/>
         </Routes>
     );
 }

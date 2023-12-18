@@ -1,5 +1,5 @@
 import {getBaseHost} from "../components/env";
-import {ErrLogDiagnosticReq, SqlDiagnosticReq} from "../interface/interface";
+import {ErrLogDiagnosticReq, GitDiffAnalysisReq, SqlDiagnosticReq} from "../interface/interface";
 
 export const dataStatisticsByDay = (setData: Function) => {
     fetch(getBaseHost() + '/pFinderData/dataStatisticsByDay',
@@ -82,11 +82,11 @@ export const dataStatisticsAsyncFetch = (setData: Function, queryParams: any) =>
 
 export const sqlDiagnosticFetch = (reqObject: SqlDiagnosticReq, setSqlDiagnosticResult: Function) => {
     let url = "";
-    if (reqObject.index == 1) {
+    if (reqObject.index === 1) {
         url = getBaseHost() + '/sqlDr/sqlDiagnostic';
-    } else if (reqObject.index == 2) {
+    } else if (reqObject.index === 2) {
         url = getBaseHost() + '/sqlDr/sqlExplainDiagnostic';
-    } else if (reqObject.index == 3) {
+    } else if (reqObject.index === 3) {
         url = getBaseHost() + '/sqlDr/tableAndIndexDiagnostic';
     } else {
         return;
@@ -135,6 +135,32 @@ export const errLogDiagnosticFetch = (reqObject: ErrLogDiagnosticReq, setErrLogD
                 result = json.msg;
             }
             setErrLogDiagnosticResult(result);
+            reqObject.componentDisabled(false);
+        })
+        .catch((error) => {
+            console.log('fetch data failed', error);
+        });
+};
+
+export const gitDiffAnalysisFetch = (reqObject: GitDiffAnalysisReq, setGitDiffAnalysisReqResult: Function) => {
+    let url = getBaseHost() + '/gitDiffDr/getDiffResult';
+    fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(reqObject),
+        }
+    )
+        .then((response) => {
+            return response.json();
+        })
+        .then((json) => {
+            let result = json.data;
+            if (result === null || result === undefined || result === "") {
+                result = json.msg;
+            }
+            setGitDiffAnalysisReqResult(result);
             reqObject.componentDisabled(false);
         })
         .catch((error) => {

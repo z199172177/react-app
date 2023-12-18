@@ -92,3 +92,9 @@ export interface ErrLogDiagnosticReq {
     logContent: string;
     componentDisabled: any;
 }
+
+//gitDiff分析，请求
+export interface GitDiffAnalysisReq {
+    gitDiffContent: string;
+    componentDisabled: any;
+}

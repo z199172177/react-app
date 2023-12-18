@@ -26,6 +26,11 @@ const LayoutHeaderContent: React.FC<Props> = (props) => {
             key: 'errLogDiagnostic',
             icon: <SettingOutlined/>
         },
+        {
+            label: (<Link to="/gitDiffAnalysis">git提交记录分析</Link>),
+            key: 'gitDiffAnalysis',
+            icon: <SettingOutlined/>
+        },
     ];
 
     return (
